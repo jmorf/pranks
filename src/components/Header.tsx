@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { User } from '@/payload-types'
-import { LogIn } from 'lucide-react'
+import { AuthModal } from '@/components/AuthModal'
 
 interface HeaderProps {
   user: User | null
@@ -38,12 +38,7 @@ export function Header({ user }: HeaderProps) {
                 </Link>
               </>
             ) : (
-              <Link href="/admin">
-                <Button variant="outline" size="sm" className="gap-2 font-bold">
-                  <LogIn className="h-4 w-4" />
-                  <span className="hidden sm:inline">Sign In</span>
-                </Button>
-              </Link>
+              <AuthModal />
             )}
           </div>
         </div>

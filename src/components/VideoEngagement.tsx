@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
-import { Button } from '@/components/ui/button'
+import { AuthModal } from '@/components/AuthModal'
 import { Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
 
@@ -24,8 +24,6 @@ export function VideoEngagement({
 
   const handleLike = async () => {
     if (!isAuthenticated) {
-      // Redirect to login
-      window.location.href = '/admin'
       return
     }
 
@@ -45,24 +43,38 @@ export function VideoEngagement({
     })
   }
 
+  if (!isAuthenticated) {
+    return (
+      <AuthModal
+        trigger={
+          <button className="flex flex-col items-center justify-center py-3 border-r border-border hover:bg-muted/50 transition-colors w-full">
+            <Heart className="h-5 w-5 text-muted-foreground" />
+            <span className="text-xs text-muted-foreground mt-1">{likesCount} Likes</span>
+          </button>
+        }
+      />
+    )
+  }
+
   return (
-    <Button
-      variant="outline"
-      size="sm"
+    <button
       onClick={handleLike}
       disabled={isPending}
       className={cn(
-        'gap-2 transition-colors',
-        hasLiked && 'bg-primary/10 border-primary text-primary hover:bg-primary/20'
+        'flex flex-col items-center justify-center py-3 border-r border-border hover:bg-muted/50 transition-colors w-full',
+        hasLiked && 'bg-primary/5'
       )}
     >
       <Heart
         className={cn(
-          'h-4 w-4 transition-all',
-          hasLiked && 'fill-primary text-primary'
+          'h-5 w-5 transition-all',
+          hasLiked ? 'fill-primary text-primary' : 'text-muted-foreground'
         )}
       />
-      <span className="font-medium">{likesCount}</span>
-    </Button>
+      <span className={cn(
+        'text-xs mt-1',
+        hasLiked ? 'text-primary font-medium' : 'text-muted-foreground'
+      )}>{likesCount} Likes</span>
+    </button>
   )
 }

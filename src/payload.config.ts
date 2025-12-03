@@ -31,6 +31,16 @@ export default buildConfig({
     importMap: {
       baseDir: path.resolve(dirname),
     },
+    meta: {
+      titleSuffix: ' | PRANKS.com',
+      icons: [{ url: '/favicon.ico' }],
+    },
+    components: {
+      graphics: {
+        Logo: '@/components/admin/Logo#Logo',
+        Icon: '@/components/admin/Icon#Icon',
+      },
+    },
   },
   collections: [Users, Media, Videos, Likes, Comments],
   editor: lexicalEditor(),

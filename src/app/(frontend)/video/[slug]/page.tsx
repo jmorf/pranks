@@ -170,52 +170,61 @@ export default async function VideoPage({ params }: VideoPageProps) {
           {/* Video Player */}
           <VideoPlayer video={video} />
           
+          {/* Engagement Bar - Equal width buttons like DailyMotion */}
+          <div className="mt-3 grid grid-cols-4 border-t border-b border-border">
+            <div className="flex flex-col items-center justify-center py-3 border-r border-border">
+              <span className="text-lg font-bold text-foreground">{((video.viewCount || 0) + 1).toLocaleString()}</span>
+              <span className="text-xs text-muted-foreground">Views</span>
+            </div>
+            <VideoEngagement
+              videoId={String(video.id)}
+              likesCount={likesCount}
+              userHasLiked={userHasLiked}
+              isAuthenticated={!!user}
+            />
+            <ShareButtons
+              url={videoUrl}
+              title={videoDisplayTitle}
+            />
+            <button className="flex flex-col items-center justify-center py-3 hover:bg-muted/50 transition-colors">
+              <svg className="h-5 w-5 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
+              </svg>
+              <span className="text-xs text-muted-foreground mt-1">More</span>
+            </button>
+          </div>
+          
           {/* Video Info */}
           <div className="mt-4">
-            <div className="flex items-start justify-between gap-4 flex-wrap">
-              <div className="flex-1 min-w-0">
-                <h1 className="text-xl md:text-2xl font-bold text-foreground line-clamp-2">
-                  {(video as any).displayTitle || video.title}
-                </h1>
-                <div className="flex items-center gap-3 mt-2 text-sm text-muted-foreground">
-                  <span>{(video.viewCount || 0) + 1} views</span>
-                  <span>•</span>
-                  <span>
-                    {new Date(video.createdAt).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </span>
-                </div>
-              </div>
-              
-              {/* Platform Badge */}
-              <div className={`
-                px-3 py-1 text-xs font-bold uppercase
-                ${video.platform === 'youtube' 
-                  ? 'bg-red-600 text-white' 
-                  : 'bg-black text-white'}
-              `}>
-                {video.platform}
-              </div>
-            </div>
+            {/* Title */}
+            <h1 className="text-xl md:text-2xl font-bold text-foreground line-clamp-2">
+              {(video as any).displayTitle || video.title}
+            </h1>
             
             {/* Author */}
-            <div className="mt-4 flex items-center gap-2">
+            <div className="mt-4 flex items-center gap-3">
               <div className="w-10 h-10 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold">
                 {video.originalAuthor.charAt(0).toUpperCase()}
               </div>
-              <div>
+              <div className="flex items-center gap-2">
                 <p className="font-medium text-foreground">{video.originalAuthor}</p>
                 {video.originalAuthorUrl && (
                   <a
                     href={video.originalAuthorUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-sm text-primary hover:underline"
+                    className="text-muted-foreground hover:text-foreground transition-colors"
+                    title={`View on ${video.platform === 'youtube' ? 'YouTube' : 'TikTok'}`}
                   >
-                    View channel
+                    {video.platform === 'youtube' ? (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                      </svg>
+                    )}
                   </a>
                 )}
               </div>
@@ -229,20 +238,6 @@ export default async function VideoPage({ params }: VideoPageProps) {
                 </p>
               </div>
             )}
-            
-            {/* Engagement Bar */}
-            <div className="mt-6 flex items-center gap-4 flex-wrap">
-              <VideoEngagement
-                videoId={String(video.id)}
-                likesCount={likesCount}
-                userHasLiked={userHasLiked}
-                isAuthenticated={!!user}
-              />
-              <ShareButtons
-                url={videoUrl}
-                title={videoDisplayTitle}
-              />
-            </div>
           </div>
           
           {/* Comments */}

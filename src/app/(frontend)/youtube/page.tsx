@@ -57,7 +57,7 @@ export default async function YouTubePage() {
       <footer className="mt-auto border-t border-border py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-bold text-primary">
-            MORE AWESOME VIDEOS AWAIT. YOU SHOULD WATCH THEM TOO.
+            KEEP SCROLLING. YOUR BOSS ISN&apos;T WATCHING. PROBABLY.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
             © {new Date().getFullYear()} PRANKS.com. No feelings were harmed.

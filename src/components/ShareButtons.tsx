@@ -1,6 +1,5 @@
 'use client'
 
-import { Button } from '@/components/ui/button'
 import { Share2, Link2, Twitter } from 'lucide-react'
 import { useState } from 'react'
 import {
@@ -65,12 +64,12 @@ export function ShareButtons({ url, title }: ShareButtonsProps) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-2">
-          <Share2 className="h-4 w-4" />
-          Share
-        </Button>
+        <button className="flex flex-col items-center justify-center py-3 border-r border-border hover:bg-muted/50 transition-colors w-full">
+          <Share2 className="h-5 w-5 text-muted-foreground" />
+          <span className="text-xs text-muted-foreground mt-1">Share</span>
+        </button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-48">
+      <DropdownMenuContent align="center" className="w-48">
         {canNativeShare && (
           <DropdownMenuItem onClick={shareNative}>
             <Share2 className="h-4 w-4 mr-2" />

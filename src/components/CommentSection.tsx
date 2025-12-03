@@ -1,9 +1,9 @@
 'use client'
 
 import { useState, useTransition, ChangeEvent } from 'react'
-import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
+import { AuthModal } from '@/components/AuthModal'
 import { Comment, User } from '@/payload-types'
 import { MessageCircle, Trash2 } from 'lucide-react'
 
@@ -114,9 +114,13 @@ export function CommentSection({
       ) : (
         <div className="mb-6 p-4 bg-muted rounded-lg text-center">
           <p className="text-sm text-muted-foreground">
-            <Link href="/admin" className="text-primary hover:underline font-medium">
-              Sign in
-            </Link>{' '}
+            <AuthModal 
+              trigger={
+                <button className="text-primary hover:underline font-medium">
+                  Sign in
+                </button>
+              }
+            />{' '}
             to leave a comment
           </p>
         </div>

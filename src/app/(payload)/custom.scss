@@ -1,0 +1,215 @@
+// PRANKS.com Admin Branding
+
+// Brand colors matching frontend
+$primary-red: #DC2626;
+$primary-red-hover: #B91C1C;
+$background: #FAFAFA;
+$foreground: #0A0A0A;
+
+// Login page styling
+.login {
+  background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+  
+  &__wrapper {
+    max-width: 400px;
+  }
+  
+  &__form {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+  }
+  
+  &__brand {
+    margin-bottom: 1.5rem;
+  }
+}
+
+// Create account page
+.create-first-user,
+.create-account {
+  background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+  
+  &__wrapper {
+    max-width: 400px;
+  }
+  
+  form {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
+    padding: 2rem;
+  }
+}
+
+// Primary button styling - RED theme
+.btn {
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  transition: all 0.2s ease;
+  
+  &--style-primary {
+    background: $primary-red !important;
+    border-color: $primary-red !important;
+    
+    &:hover {
+      background: $primary-red-hover !important;
+      border-color: $primary-red-hover !important;
+    }
+    
+    &:focus {
+      box-shadow: 0 0 0 2px rgba($primary-red, 0.3) !important;
+    }
+  }
+  
+  &--style-secondary {
+    &:hover {
+      border-color: $primary-red;
+      color: $primary-red;
+    }
+  }
+}
+
+// Form inputs
+.field-type {
+  input,
+  textarea {
+    border-radius: 8px;
+    
+    &:focus {
+      border-color: $primary-red !important;
+      box-shadow: 0 0 0 2px rgba($primary-red, 0.1) !important;
+    }
+  }
+}
+
+// Links
+a {
+  &:hover {
+    color: $primary-red;
+  }
+}
+
+// Login form welcome text
+.login__header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  
+  h1 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-top: 1rem;
+  }
+}
+
+// "Back to site" link styling
+.login a[href="/"],
+.create-first-user a[href="/"],
+.create-account a[href="/"] {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #666;
+  font-weight: 500;
+  text-decoration: none;
+  margin-top: 1rem;
+  
+  &:hover {
+    color: $primary-red;
+  }
+}
+
+// Sign up link
+.login__create-account {
+  text-align: center;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+  
+  a {
+    color: $primary-red;
+    font-weight: 600;
+    
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+}
+
+// Card styling for forms
+.card {
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+}
+
+// Nav styling - accent with red
+.nav {
+  background: #fff;
+  border-right: 1px solid #eee;
+  
+  &__link {
+    &:hover,
+    &--active {
+      background: rgba($primary-red, 0.08);
+      color: $primary-red;
+    }
+    
+    &--active {
+      border-left-color: $primary-red;
+    }
+  }
+}
+
+// Header
+.app-header {
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+// Template card (for admin dashboard)
+.template-default {
+  &__wrap {
+    background: #fafafa;
+  }
+}
+
+// Checkbox/toggle accents
+input[type="checkbox"]:checked {
+  background-color: $primary-red !important;
+  border-color: $primary-red !important;
+}
+
+// Select dropdowns
+.rs__control--is-focused {
+  border-color: $primary-red !important;
+  box-shadow: 0 0 0 1px $primary-red !important;
+}
+
+// Pills/tags
+.pill {
+  &--style-light-gray {
+    &:hover {
+      background: rgba($primary-red, 0.1);
+      color: $primary-red;
+    }
+  }
+}
+
+// Table row hover
+.table .row:hover {
+  background: rgba($primary-red, 0.04);
+}
+
+// Pagination
+.paginator {
+  .paginator__page {
+    &--is-current {
+      background: $primary-red;
+      border-color: $primary-red;
+    }
+  }
+}

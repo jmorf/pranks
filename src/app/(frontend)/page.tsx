@@ -11,7 +11,7 @@ import type { Metadata } from 'next'
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = generateSEO({
-  title: 'Home',
+  title: 'Funny Prank Videos That Will Make You Laugh',
   description: "The internet's best prank videos, all in one place. Watch hilarious pranks from YouTube and TikTok.",
 })
 
@@ -49,7 +49,7 @@ export default async function HomePage() {
       <footer className="mt-auto border-t border-border py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-bold text-primary">
-            MORE AWESOME VIDEOS AWAIT. YOU SHOULD WATCH THEM TOO.
+            KEEP SCROLLING. YOUR BOSS ISN&apos;T WATCHING. PROBABLY.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
             © {new Date().getFullYear()} PRANKS.com. No feelings were harmed.
