@@ -102,9 +102,17 @@ export default async function TagPage({ params }: TagPageProps) {
       </main>
 
       {/* Footer */}
-      <footer className="mt-auto border-t border-border py-6">
+      <footer className="mt-auto border-t border-border py-8">
         <div className="container mx-auto px-4 text-center">
-          <p className="text-sm font-bold text-muted-foreground uppercase tracking-wide">
+          <div className="flex justify-center gap-4 mb-4">
+            <a href="/privacy" className="text-sm text-muted-foreground hover:text-primary">
+              Privacy Policy
+            </a>
+            <a href="/terms" className="text-sm text-muted-foreground hover:text-primary">
+              Terms of Service
+            </a>
+          </div>
+          <p className="text-sm font-bold text-primary">
             KEEP SCROLLING. YOUR BOSS ISN&apos;T WATCHING. PROBABLY.
           </p>
           <p className="text-xs text-muted-foreground mt-2">
