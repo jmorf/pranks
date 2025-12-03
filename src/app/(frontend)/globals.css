@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Colors - Bold red on white theme */
+  --color-primary: #DC2626;
+  --color-primary-foreground: #FFFFFF;
+  --color-background: #FAFAFA;
+  --color-foreground: #0A0A0A;
+  --color-card: #FFFFFF;
+  --color-card-foreground: #0A0A0A;
+  --color-popover: #FFFFFF;
+  --color-popover-foreground: #0A0A0A;
+  --color-secondary: #F4F4F5;
+  --color-secondary-foreground: #18181B;
+  --color-muted: #F4F4F5;
+  --color-muted-foreground: #71717A;
+  --color-accent: #F4F4F5;
+  --color-accent-foreground: #18181B;
+  --color-border: #E4E4E7;
+  --color-input: #E4E4E7;
+  --color-ring: #DC2626;
+  --color-destructive: #EF4444;
+  --color-destructive-foreground: #FFFFFF;
+
+  /* Border radius */
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+
+  /* Font family */
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+    'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+/* Base styles */
+*,
+*::before,
+*::after {
+  border-color: var(--color-border);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 2px solid var(--color-ring);
+  outline-offset: 2px;
+}
+
+/* Hide scrollbar for filter tabs */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Smooth card hover transitions */
+.hover-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 20px -8px rgba(0, 0, 0, 0.15);
+}
+
+/* Animated gradient background for hero sections */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient-shift 8s ease infinite;
+}

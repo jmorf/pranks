@@ -69,6 +69,9 @@ export interface Config {
   collections: {
     users: User;
     media: Media;
+    videos: Video;
+    likes: Like;
+    comments: Comment;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -78,6 +81,9 @@ export interface Config {
   collectionsSelect: {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    videos: VideosSelect<false> | VideosSelect<true>;
+    likes: LikesSelect<false> | LikesSelect<true>;
+    comments: CommentsSelect<false> | CommentsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -121,6 +127,14 @@ export interface UserAuthOperations {
  */
 export interface User {
   id: number;
+  /**
+   * Display name (optional)
+   */
+  name?: string | null;
+  /**
+   * User role for access control
+   */
+  role: 'user' | 'admin';
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -158,6 +172,111 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos".
+ */
+export interface Video {
+  id: number;
+  /**
+   * Full video title from oEmbed (includes hashtags for TikTok)
+   */
+  title: string;
+  /**
+   * Clean display title (parsed from title, without hashtags)
+   */
+  displayTitle?: string | null;
+  /**
+   * Extracted hashtags from TikTok titles
+   */
+  tags?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  /**
+   * URL-friendly slug (auto-generated from title)
+   */
+  slug?: string | null;
+  /**
+   * Video description (auto-fetched from oEmbed if available)
+   */
+  description?: string | null;
+  /**
+   * Original video URL as submitted
+   */
+  sourceUrl: string;
+  /**
+   * Normalized embed URL for iframe
+   */
+  embedUrl: string;
+  /**
+   * Video platform (auto-detected)
+   */
+  platform: 'youtube' | 'tiktok';
+  /**
+   * Thumbnail URL (auto-fetched from oEmbed)
+   */
+  thumbnailUrl: string;
+  /**
+   * Creator name from YouTube/TikTok (required)
+   */
+  originalAuthor: string;
+  /**
+   * Link to creator channel/profile (optional)
+   */
+  originalAuthorUrl?: string | null;
+  /**
+   * Number of views on our platform
+   */
+  viewCount?: number | null;
+  /**
+   * Moderation status
+   */
+  status: 'pending' | 'approved' | 'rejected';
+  /**
+   * User who submitted this video
+   */
+  submittedBy: number | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "likes".
+ */
+export interface Like {
+  id: number;
+  video: number | Video;
+  user: number | User;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments".
+ */
+export interface Comment {
+  id: number;
+  content: string;
+  video: number | Video;
+  author: number | User;
+  status: 'pending' | 'approved' | 'rejected';
+  /**
+   * IP address of commenter (for spam prevention)
+   */
+  ipAddress?: string | null;
+  /**
+   * Browser user agent
+   */
+  userAgent?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -187,6 +306,18 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'media';
         value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'videos';
+        value: number | Video;
+      } | null)
+    | ({
+        relationTo: 'likes';
+        value: number | Like;
+      } | null)
+    | ({
+        relationTo: 'comments';
+        value: number | Comment;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -235,6 +366,8 @@ export interface PayloadMigration {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  name?: T;
+  role?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -267,6 +400,52 @@ export interface MediaSelect<T extends boolean = true> {
   filesize?: T;
   width?: T;
   height?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "videos_select".
+ */
+export interface VideosSelect<T extends boolean = true> {
+  title?: T;
+  displayTitle?: T;
+  tags?: T;
+  slug?: T;
+  description?: T;
+  sourceUrl?: T;
+  embedUrl?: T;
+  platform?: T;
+  thumbnailUrl?: T;
+  originalAuthor?: T;
+  originalAuthorUrl?: T;
+  viewCount?: T;
+  status?: T;
+  submittedBy?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "likes_select".
+ */
+export interface LikesSelect<T extends boolean = true> {
+  video?: T;
+  user?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "comments_select".
+ */
+export interface CommentsSelect<T extends boolean = true> {
+  content?: T;
+  video?: T;
+  author?: T;
+  status?: T;
+  ipAddress?: T;
+  userAgent?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

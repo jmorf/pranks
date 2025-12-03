@@ -2,26 +2,27 @@ import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { Header } from '@/components/Header'
+import { VideoCard } from '@/components/VideoCard'
 import { NavBar } from '@/components/NavBar'
-import { VideoGrid } from '@/components/VideoGrid'
 import { Video, User } from '@/payload-types'
-import { generateSEO, generateWebsiteSchema, JsonLd } from '@/lib/seo'
+import { generateSEO } from '@/lib/seo'
 import type { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = generateSEO({
-  title: 'Home',
-  description: "The internet's best prank videos, all in one place. Watch hilarious pranks from YouTube and TikTok.",
+  title: 'Trending Pranks',
+  description: 'Watch the hottest trending prank videos right now. Fresh viral content from YouTube and TikTok.',
+  url: '/trending',
 })
 
-export default async function HomePage() {
+export default async function TrendingPage() {
   const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
   const { user } = await payload.auth({ headers })
 
-  // Fetch approved videos
+  // Fetch approved videos, sorted by trending score (views + recency)
   const videosResult = await payload.find({
     collection: 'videos',
     where: {
@@ -31,21 +32,32 @@ export default async function HomePage() {
     sort: '-createdAt',
   })
 
-  const videos = videosResult.docs as Video[]
-
-  const websiteSchema = generateWebsiteSchema()
+  // Sort by trending score (views weighted by recency)
+  const videos = (videosResult.docs as Video[]).sort((a, b) => {
+    const aScore = (a.viewCount || 0) + (new Date(a.createdAt).getTime() / 1000000000)
+    const bScore = (b.viewCount || 0) + (new Date(b.createdAt).getTime() / 1000000000)
+    return bScore - aScore
+  })
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <JsonLd data={websiteSchema} />
       <Header user={user as User | null} />
       <NavBar />
       
       <main className="container mx-auto px-4 py-6">
-        <VideoGrid videos={videos} />
+        {videos.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-muted-foreground">No trending videos yet.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-1">
+            {videos.map((video) => (
+              <VideoCard key={video.id} video={video} />
+            ))}
+          </div>
+        )}
       </main>
       
-      {/* Footer */}
       <footer className="mt-auto border-t border-border py-8">
         <div className="container mx-auto px-4 text-center">
           <p className="text-sm font-bold text-primary">
