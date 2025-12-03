@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition, ChangeEvent } from 'react'
+import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
 import { Comment, User } from '@/payload-types'
@@ -113,9 +114,9 @@ export function CommentSection({
       ) : (
         <div className="mb-6 p-4 bg-muted rounded-lg text-center">
           <p className="text-sm text-muted-foreground">
-            <a href="/admin" className="text-primary hover:underline font-medium">
+            <Link href="/admin" className="text-primary hover:underline font-medium">
               Sign in
-            </a>{' '}
+            </Link>{' '}
             to leave a comment
           </p>
         </div>

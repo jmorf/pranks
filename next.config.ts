@@ -1,36 +1,36 @@
 import { withPayload } from '@payloadcms/next/withPayload'
+import type { NextConfig } from 'next'
 
-/** @type {import('next').NextConfig} */
-const nextConfig = {
+const nextConfig: NextConfig = {
   // Your Next.js config here
   images: {
     remotePatterns: [
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'img.youtube.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'i.ytimg.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: '**.tiktokcdn.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: '**.tiktokcdn-us.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'p16-sign-va.tiktokcdn.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'p16-sign-sg.tiktokcdn.com',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'p16-sign.tiktokcdn-us.com',
       },
     ],

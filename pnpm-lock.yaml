@@ -9,7 +9,7 @@ importers:
   .:
     dependencies:
       '@opennextjs/cloudflare':
-        specifier: ^1.11.0
+        specifier: ^1.14.1
         version: 1.14.1(wrangler@4.46.0)
       '@payloadcms/db-d1-sqlite':
         specifier: 3.63.0
@@ -75,6 +75,9 @@ importers:
         specifier: ^1.0.7
         version: 1.0.7(tailwindcss@4.1.17)
     devDependencies:
+      '@eslint/eslintrc':
+        specifier: ^3.3.3
+        version: 3.3.3
       '@playwright/test':
         specifier: 1.56.1
         version: 1.56.1

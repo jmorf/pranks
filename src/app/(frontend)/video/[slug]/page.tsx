@@ -233,14 +233,14 @@ export default async function VideoPage({ params }: VideoPageProps) {
             {/* Engagement Bar */}
             <div className="mt-6 flex items-center gap-4 flex-wrap">
               <VideoEngagement
-                videoId={video.id}
+                videoId={String(video.id)}
                 likesCount={likesCount}
                 userHasLiked={userHasLiked}
                 isAuthenticated={!!user}
               />
               <ShareButtons
                 url={videoUrl}
-                title={video.title}
+                title={videoDisplayTitle}
               />
             </div>
           </div>
