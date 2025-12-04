@@ -1,4 +1,3 @@
-import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { notFound } from 'next/navigation'
@@ -9,7 +8,7 @@ import { VideoEngagement } from '@/components/VideoEngagement'
 import { CommentSection } from '@/components/CommentSection'
 import { ShareButtons } from '@/components/ShareButtons'
 import { generateSEO, generateVideoSchema, generateBreadcrumbSchema, JsonLd } from '@/lib/seo'
-import { Video, User, Comment } from '@/payload-types'
+import { Video, Comment } from '@/payload-types'
 
 export const dynamic = 'force-dynamic'
 
@@ -83,10 +82,8 @@ export async function generateMetadata({ params }: VideoPageProps): Promise<Meta
 
 export default async function VideoPage({ params }: VideoPageProps) {
   const { slug } = await params
-  const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
 
   const video = await findVideo(payload, slug)
   
@@ -102,26 +99,13 @@ export default async function VideoPage({ params }: VideoPageProps) {
     overrideAccess: true,
   })
 
-  // Fetch likes count and user's like status
+  // Fetch likes count - user like status will be fetched client-side
   const likesResult = await payload.find({
     collection: 'likes',
     where: { video: { equals: video.id } },
     limit: 0,
   })
   const likesCount = likesResult.totalDocs
-
-  let userHasLiked = false
-  if (user) {
-    const userLike = await payload.find({
-      collection: 'likes',
-      where: {
-        video: { equals: video.id },
-        user: { equals: user.id },
-      },
-      limit: 1,
-    })
-    userHasLiked = userLike.docs.length > 0
-  }
 
   // Fetch comments
   const commentsResult = await payload.find({
@@ -163,7 +147,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <JsonLd data={[videoSchema, breadcrumbSchema]} />
-      <Header user={user as User | null} />
+      <Header />
       
       <main className="flex-1 container mx-auto px-4 py-6">
         <div className="max-w-4xl mx-auto">
@@ -178,9 +162,7 @@ export default async function VideoPage({ params }: VideoPageProps) {
             </div>
             <VideoEngagement
               videoId={String(video.id)}
-              likesCount={likesCount}
-              userHasLiked={userHasLiked}
-              isAuthenticated={!!user}
+              initialLikesCount={likesCount}
             />
             <ShareButtons
               url={videoUrl}
@@ -245,8 +227,6 @@ export default async function VideoPage({ params }: VideoPageProps) {
             <CommentSection
               videoId={String(video.id)}
               initialComments={comments}
-              isAuthenticated={!!user}
-              currentUserId={user?.id}
             />
           </div>
         </div>

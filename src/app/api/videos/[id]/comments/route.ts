@@ -2,9 +2,39 @@ import { headers as getHeaders } from 'next/headers'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { NextRequest, NextResponse } from 'next/server'
+import { initAuth } from '@/lib/auth'
 
 interface RouteParams {
   params: Promise<{ id: string }>
+}
+
+// Helper to get or create Payload user from Better Auth session
+async function getOrCreatePayloadUser(payload: any, session: any) {
+  if (!session?.user?.email) return null
+  
+  // Find existing Payload user with same email
+  const existing = await payload.find({
+    collection: 'users',
+    where: { email: { equals: session.user.email } },
+    limit: 1,
+  })
+  
+  if (existing.docs.length > 0) {
+    return existing.docs[0]
+  }
+  
+  // Create a new Payload user for this Better Auth user
+  const newUser = await payload.create({
+    collection: 'users',
+    data: {
+      email: session.user.email,
+      name: session.user.name || session.user.email.split('@')[0],
+      password: crypto.randomUUID(), // Random password since auth is handled by Better Auth
+    },
+    overrideAccess: true,
+  })
+  
+  return newUser
 }
 
 // GET - Get comments for a video
@@ -39,10 +69,19 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     const headers = await getHeaders()
     const payloadConfig = await config
     const payload = await getPayload({ config: payloadConfig })
-    const { user } = await payload.auth({ headers })
+    
+    // Get Better Auth session
+    const auth = initAuth()
+    const session = await auth.api.getSession({ headers })
 
-    if (!user) {
+    if (!session?.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // Get or create corresponding Payload user
+    const payloadUser = await getOrCreatePayloadUser(payload, session)
+    if (!payloadUser) {
+      return NextResponse.json({ error: 'User not found' }, { status: 401 })
     }
 
     const body = await request.json() as { content?: string }
@@ -62,10 +101,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       data: {
         content: content.trim(),
         video: Number(id),
-        author: user.id,
+        author: payloadUser.id,
         status: 'approved', // Auto-approve for now
       },
       depth: 1,
+      overrideAccess: true,
     })
 
     return NextResponse.json(comment)

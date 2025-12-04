@@ -1,26 +1,44 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useEffect } from 'react'
 import { AuthModal } from '@/components/AuthModal'
 import { Heart } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { useSession } from '@/lib/authClient'
 
 interface VideoEngagementProps {
   videoId: string
-  likesCount: number
-  userHasLiked: boolean
-  isAuthenticated: boolean
+  initialLikesCount: number
 }
 
 export function VideoEngagement({
   videoId,
-  likesCount: initialLikesCount,
-  userHasLiked: initialUserHasLiked,
-  isAuthenticated,
+  initialLikesCount,
 }: VideoEngagementProps) {
+  const { data: session, isPending: isSessionPending } = useSession()
+  const isAuthenticated = !!session?.user
+  
   const [likesCount, setLikesCount] = useState(initialLikesCount)
-  const [hasLiked, setHasLiked] = useState(initialUserHasLiked)
+  const [hasLiked, setHasLiked] = useState(false)
   const [isPending, startTransition] = useTransition()
+  const [isLoadingLikeStatus, setIsLoadingLikeStatus] = useState(true)
+
+  // Fetch user's like status when authenticated
+  useEffect(() => {
+    if (isSessionPending) return
+    
+    if (isAuthenticated) {
+      fetch(`/api/videos/${videoId}/like-status`)
+        .then(res => res.json())
+        .then((data: { hasLiked?: boolean }) => {
+          setHasLiked(data.hasLiked || false)
+        })
+        .catch(console.error)
+        .finally(() => setIsLoadingLikeStatus(false))
+    } else {
+      setIsLoadingLikeStatus(false)
+    }
+  }, [videoId, isAuthenticated, isSessionPending])
 
   const handleLike = async () => {
     if (!isAuthenticated) {
@@ -41,6 +59,16 @@ export function VideoEngagement({
         console.error('Failed to toggle like:', error)
       }
     })
+  }
+
+  // Show loading state
+  if (isSessionPending || isLoadingLikeStatus) {
+    return (
+      <div className="flex flex-col items-center justify-center py-3 border-r border-border w-full">
+        <Heart className="h-5 w-5 text-muted-foreground animate-pulse" />
+        <span className="text-xs text-muted-foreground mt-1">{likesCount} Likes</span>
+      </div>
+    )
   }
 
   if (!isAuthenticated) {

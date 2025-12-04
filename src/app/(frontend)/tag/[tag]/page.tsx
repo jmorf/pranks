@@ -1,11 +1,10 @@
 import { Metadata } from 'next'
-import { headers as getHeaders } from 'next/headers.js'
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { Header } from '@/components/Header'
 import { NavBar } from '@/components/NavBar'
 import { VideoGrid } from '@/components/VideoGrid'
-import { User, Video } from '@/payload-types'
+import { Video } from '@/payload-types'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
 
@@ -35,10 +34,8 @@ export default async function TagPage({ params }: TagPageProps) {
   const { tag } = await params
   const decodedTag = decodeURIComponent(tag).toLowerCase()
   
-  const headers = await getHeaders()
   const payloadConfig = await config
   const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
 
   // Find videos with this tag
   // Since tags is a JSON field, we need to search for videos containing this tag
@@ -61,7 +58,7 @@ export default async function TagPage({ params }: TagPageProps) {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header user={user as User | null} />
+      <Header />
       <NavBar />
 
       <main className="flex-1">

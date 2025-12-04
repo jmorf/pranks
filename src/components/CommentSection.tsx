@@ -6,20 +6,21 @@ import { Textarea } from '@/components/ui/textarea'
 import { AuthModal } from '@/components/AuthModal'
 import { Comment, User } from '@/payload-types'
 import { MessageCircle, Trash2 } from 'lucide-react'
+import { useSession } from '@/lib/authClient'
 
 interface CommentSectionProps {
   videoId: string
   initialComments: Comment[]
-  isAuthenticated: boolean
-  currentUserId?: number
 }
 
 export function CommentSection({
   videoId,
   initialComments,
-  isAuthenticated,
-  currentUserId,
 }: CommentSectionProps) {
+  const { data: session, isPending: isSessionPending } = useSession()
+  const isAuthenticated = !!session?.user
+  const currentUserId = session?.user?.id
+  
   const [comments, setComments] = useState<Comment[]>(initialComments)
   const [newComment, setNewComment] = useState('')
   const [isPending, startTransition] = useTransition()
@@ -81,15 +82,18 @@ export function CommentSection({
     })
   }
 
-  return (
-    <div>
-      <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
-        <MessageCircle className="h-5 w-5" />
-        Comments ({comments.length})
-      </h2>
+  // Show loading state for comment form while checking auth
+  const renderCommentForm = () => {
+    if (isSessionPending) {
+      return (
+        <div className="mb-6 p-4 bg-muted rounded-lg animate-pulse">
+          <div className="h-[80px] bg-muted-foreground/10 rounded" />
+        </div>
+      )
+    }
 
-      {/* Comment Form */}
-      {isAuthenticated ? (
+    if (isAuthenticated) {
+      return (
         <form onSubmit={handleSubmit} className="mb-6">
           <Textarea
             value={newComment}
@@ -111,20 +115,34 @@ export function CommentSection({
             </Button>
           </div>
         </form>
-      ) : (
-        <div className="mb-6 p-4 bg-muted rounded-lg text-center">
-          <p className="text-sm text-muted-foreground">
-            <AuthModal 
-              trigger={
-                <button className="text-primary hover:underline font-medium">
-                  Sign in
-                </button>
-              }
-            />{' '}
-            to leave a comment
-          </p>
-        </div>
-      )}
+      )
+    }
+
+    return (
+      <div className="mb-6 p-4 bg-muted rounded-lg text-center">
+        <p className="text-sm text-muted-foreground">
+          <AuthModal 
+            trigger={
+              <button className="text-primary hover:underline font-medium">
+                Sign in
+              </button>
+            }
+          />{' '}
+          to leave a comment
+        </p>
+      </div>
+    )
+  }
+
+  return (
+    <div>
+      <h2 className="text-lg font-bold flex items-center gap-2 mb-4">
+        <MessageCircle className="h-5 w-5" />
+        Comments ({comments.length})
+      </h2>
+
+      {/* Comment Form */}
+      {renderCommentForm()}
 
       {/* Comments List */}
       <div className="space-y-4">
@@ -135,7 +153,9 @@ export function CommentSection({
         ) : (
           comments.map((comment) => {
             const author = comment.author as User
-            const isOwner = currentUserId === author?.id
+            // Check if current user owns this comment
+            // Note: author.id from Payload is a number, currentUserId from Better Auth is a string
+            const isOwner = currentUserId && author?.id && String(author.id) === currentUserId
 
             return (
               <div key={comment.id} className="flex gap-3">

@@ -2,14 +2,19 @@
 
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
-import { User } from '@/payload-types'
 import { AuthModal } from '@/components/AuthModal'
+import { useSession, signOut } from '@/lib/authClient'
+import { LogOut } from 'lucide-react'
 
-interface HeaderProps {
-  user: User | null
-}
+export function Header() {
+  const { data: session, isPending } = useSession()
+  const user = session?.user
 
-export function Header({ user }: HeaderProps) {
+  const handleSignOut = async () => {
+    await signOut()
+    window.location.reload()
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full bg-white border-b border-border">
       <div className="container mx-auto px-4">
@@ -23,19 +28,26 @@ export function Header({ user }: HeaderProps) {
 
           {/* Actions */}
           <div className="flex items-center gap-2 md:gap-3">
-            {user ? (
+            {isPending ? (
+              <div className="h-8 w-20 bg-muted animate-pulse rounded" />
+            ) : user ? (
               <>
                 <Link href="/submit">
                   <Button size="sm" className="font-black text-xs md:text-sm">
                     SUBMIT VIDEO
                   </Button>
                 </Link>
-                <Link 
-                  href="/admin" 
-                  className="text-sm font-bold text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
-                >
+                <span className="text-sm font-bold text-muted-foreground hidden sm:block">
                   {user.name || user.email}
-                </Link>
+                </span>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={handleSignOut}
+                  className="text-muted-foreground hover:text-foreground"
+                >
+                  <LogOut className="h-4 w-4" />
+                </Button>
               </>
             ) : (
               <AuthModal />

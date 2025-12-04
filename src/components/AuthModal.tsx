@@ -13,6 +13,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog'
 import { LogIn, UserPlus, Loader2 } from 'lucide-react'
+import { signIn, signUp } from '@/lib/authClient'
 
 interface AuthModalProps {
   trigger?: React.ReactNode
@@ -58,36 +59,39 @@ export function AuthModal({ trigger, defaultMode = 'signin', onSuccess }: AuthMo
           return
         }
 
-        // Create account
-        const createRes = await fetch('/api/users', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password, name }),
+        // Create account with Better Auth
+        const result = await signUp.email({
+          email,
+          password,
+          name,
         })
 
-        if (!createRes.ok) {
-          const data = await createRes.json() as { errors?: { message: string }[] }
-          throw new Error(data.errors?.[0]?.message || 'Failed to create account')
+        if (result.error) {
+          throw new Error(result.error.message || 'Failed to create account')
         }
+
+        // Success - account created and signed in
+        setOpen(false)
+        resetForm()
+        onSuccess?.()
+        window.location.reload()
+      } else {
+        // Sign in with Better Auth
+        const result = await signIn.email({
+          email,
+          password,
+        })
+
+        if (result.error) {
+          throw new Error(result.error.message || 'Invalid email or password')
+        }
+
+        // Success
+        setOpen(false)
+        resetForm()
+        onSuccess?.()
+        window.location.reload()
       }
-
-      // Login
-      const loginRes = await fetch('/api/users/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      })
-
-      if (!loginRes.ok) {
-        const data = await loginRes.json() as { errors?: { message: string }[] }
-        throw new Error(data.errors?.[0]?.message || 'Invalid email or password')
-      }
-
-      // Success
-      setOpen(false)
-      resetForm()
-      onSuccess?.()
-      window.location.reload()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {

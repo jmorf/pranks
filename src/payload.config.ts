@@ -32,7 +32,7 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     meta: {
-      titleSuffix: ' | PRANKS.com',
+      titleSuffix: ' | PRANKS.com Admin',
       icons: [{ url: '/favicon.ico' }],
     },
     components: {
@@ -41,6 +41,9 @@ export default buildConfig({
         Icon: '@/components/admin/Icon#Icon',
       },
     },
+  },
+  routes: {
+    admin: '/manage',
   },
   collections: [Users, Media, Videos, Likes, Comments],
   editor: lexicalEditor(),

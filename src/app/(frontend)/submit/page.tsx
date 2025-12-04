@@ -1,37 +1,44 @@
-import { headers as getHeaders } from 'next/headers.js'
-import { redirect } from 'next/navigation'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
+'use client'
+
+import { useRouter } from 'next/navigation'
+import { useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { SubmitForm } from '@/components/SubmitForm'
-import { User } from '@/payload-types'
 import Link from 'next/link'
 import { ArrowLeft } from 'lucide-react'
-import { generateSEO } from '@/lib/seo'
-import type { Metadata } from 'next'
+import { useSession } from '@/lib/authClient'
 
-export const dynamic = 'force-dynamic'
+export default function SubmitPage() {
+  const { data: session, isPending } = useSession()
+  const router = useRouter()
 
-export const metadata: Metadata = generateSEO({
-  title: 'Submit a Prank Video',
-  description: 'Share your favorite prank video from YouTube or TikTok with the PRANKS.com community.',
-  url: '/submit',
-})
+  // Redirect to home if not authenticated (after loading)
+  useEffect(() => {
+    if (!isPending && !session?.user) {
+      router.push('/')
+    }
+  }, [isPending, session, router])
 
-export default async function SubmitPage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
+  // Show loading while checking auth
+  if (isPending) {
+    return (
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full" />
+        </div>
+      </div>
+    )
+  }
 
-  // Redirect to login if not authenticated
-  if (!user) {
-    redirect('/admin/login?redirect=/submit')
+  // Don't render form if not authenticated
+  if (!session?.user) {
+    return null
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Header user={user as User} />
+      <Header />
       
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-xl mx-auto">

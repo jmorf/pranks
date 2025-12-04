@@ -3,27 +3,18 @@ import { NavBar } from '@/components/NavBar'
 import { generateSEO } from '@/lib/seo'
 import type { Metadata } from 'next'
 import Link from 'next/link'
-import { headers as getHeaders } from 'next/headers.js'
-import { getPayload } from 'payload'
-import config from '@/payload.config'
-import { User } from '@/payload-types'
 
 export const metadata: Metadata = generateSEO({
   title: 'Terms of Service',
   description: 'Terms of Service for PRANKS.com - Read our terms and conditions for using our website.',
 })
 
-export default async function TermsPage() {
-  const headers = await getHeaders()
-  const payloadConfig = await config
-  const payload = await getPayload({ config: payloadConfig })
-  const { user } = await payload.auth({ headers })
-
+export default function TermsPage() {
   const lastUpdated = 'December 3, 2025'
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <Header user={user as User | null} />
+      <Header />
       <NavBar />
       
       <main className="container mx-auto px-4 py-8 max-w-4xl">
